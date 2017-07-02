@@ -1,0 +1,18 @@
+.item {
+  color: white !important;
+}
+
+.logo {
+  max-width: 200px;
+  padding: 20px;
+}
+
+.logo-container {
+  background-color: rgb(70, 160, 217);
+}
+
+.ui.menu {
+  background-color: rgb(49,55,65);
+  border: none;
+  box-shadow: none;
+}
