@@ -23,6 +23,12 @@ def get_invoice_api_data():
 
     return data
 
+def invoices(request):
+    invoices = Invoice.objects.all()
+    context = {'invoices': invoices}
+
+    return render(request, 'simplelegal/invoices.html', context)
+
 def seed_invoice_model(request):
     data = get_invoice_api_data()
     invoices = data.get('results')
