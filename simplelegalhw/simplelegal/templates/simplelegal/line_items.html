@@ -1,0 +1,28 @@
+{% extends './base.html' %}
+
+{% block content %}<br><br>
+
+<table class="ui striped table">
+  <thead>
+    <tr>
+      <th>Line Item Number</th>
+      <th>Invoice Number</th>
+      <th>Description</th>
+      <th>Units</th>
+      <th class="right aligned">Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for item in line_items %}
+    <tr>
+      <td>{{ item.line_item_number }}</td>
+      <td>{{ item.invoice_number }}</td>
+      <td>{{ item.description }}</td>
+      <td>{{ item.units }}</td>
+      <td class="right aligned">{{ item.total }}</td>
+    </tr>
+  {% endfor %}
+</tbody>
+</table>
+
+{% endblock %}
