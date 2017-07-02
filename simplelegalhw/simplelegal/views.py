@@ -7,7 +7,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from simplelegal.models import Invoice
+from simplelegal.models import Invoice, LineItem
 
 # Create your views here.
 def get_invoice_api_data():
@@ -53,3 +53,44 @@ def seed_invoice_model(request):
         curr_invoice.save()
 
     return HttpResponse("Invoice model seed complete...")
+
+def seed_lineitem_model(request):
+    auth_token_file = os.path.join(settings.PROJECT_ROOT, 'auth_token.txt')
+    with open(auth_token_file) as f:
+        AUTH_TOKEN = f.read().strip()
+
+    invoice_urls = Invoice.objects.values_list('api_url', flat=True)
+    for url in invoice_urls:
+        request = urllib2.Request(url)
+        request.add_header('Authorization', 'Token ' + AUTH_TOKEN)
+        response = urllib2.urlopen(request)
+        data = json.load(response)
+
+        invoice_number = data['invoice_number']
+        lines = data['lines']
+        for line in lines:
+            current_line = LineItem()
+            current_line.line_item_number = line['line_item_number']
+            current_line.invoice_number = invoice_number
+            current_line.description = line['description']
+            current_line.law_firm_matter_id = line['law_firm_matter_id']
+            current_line.client_id = line['client_id']
+            current_line.line_item_type = line['line_item_type']
+            current_line.units = line['units']
+            current_line.rate = line['rate']
+            current_line.adjustment = line['adjustment']
+            current_line.total = line['total']
+            current_line.date = line['date']
+            current_line.task_code = line['task_code']
+            current_line.expense_code = line['expense_code']
+            current_line.activity_code = line['activity_code']
+            current_line.timekeeper_id = line['timekeeper_id']
+            current_line.timekeeper = line['timekeeper']
+            current_line.timekeeper_level = line['timekeeper_level']
+            current_line.native_tax = line['native_tax']
+            current_line.native_rate = line['native_rate']
+            current_line.native_adjustment = line['native_adjustment']
+            current_line.native_total = line['native_total']
+            current_line.save()
+
+    return HttpResponse("LineItem model seed complete...")
