@@ -29,6 +29,12 @@ def invoices(request):
 
     return render(request, 'simplelegal/invoices.html', context)
 
+def line_items(request, invoice_number):
+    line_items = LineItem.objects.filter(invoice_number=invoice_number)
+    context = {'line_items': line_items}
+
+    return render(request, 'simplelegal/line_items.html', context)
+
 def seed_invoice_model(request):
     data = get_invoice_api_data()
     invoices = data.get('results')
