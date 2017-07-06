@@ -1,3 +1,7 @@
+.item a:link, .item a:visited, .item a:hover, .item a:active {
+  color: white;
+}
+
 .item {
   color: white !important;
 }
