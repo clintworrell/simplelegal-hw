@@ -3,15 +3,30 @@ from __future__ import unicode_literals
 
 import json, os, urllib2
 
+from django.db.models import Q, Sum
 from django.http import HttpResponse
 from django.shortcuts import render
 
 from simplelegal.models import Invoice, LineItem
 from utils import get_invoice_api_data
 
+def filter_invoices(request, search_term):
+    invoices = Invoice.objects.filter(Q(vendor__icontains=search_term)
+                                    | Q(invoice_number__icontains=search_term)
+                                    | Q(invoice_date__icontains=search_term)
+                                    | Q(status__icontains=search_term)
+                                    | Q(total__icontains=search_term))
+    filtered_sum = invoices.aggregate(Sum('total'))
+    filtered_sum = filtered_sum['total__sum']
+    context = {'invoices': invoices, 'total_sum': filtered_sum}
+
+    return render(request, 'simplelegal/invoice_table.html', context)
+
 def invoices(request):
     invoices = Invoice.objects.all()
-    context = {'invoices': invoices}
+    total_sum = invoices.aggregate(Sum('total'))
+    total_sum = total_sum['total__sum']
+    context = {'invoices': invoices, 'total_sum': total_sum}
 
     return render(request, 'simplelegal/invoices.html', context)
 
